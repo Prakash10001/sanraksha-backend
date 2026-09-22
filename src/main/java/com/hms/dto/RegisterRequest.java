@@ -20,4 +20,6 @@ public class RegisterRequest {
 
     // Optional, only relevant when role == DOCTOR
     private String specialization;
+
+    private String gender;
 }

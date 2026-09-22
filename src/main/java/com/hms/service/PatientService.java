@@ -1,5 +1,6 @@
 package com.hms.service;
 
+import com.hms.dto.PatientProfileResponse;
 import com.hms.entity.Patient;
 import com.hms.repository.PatientRepository;
 import com.hms.repository.UserRepository;
@@ -20,5 +21,22 @@ public class PatientService {
 
         return patientRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new IllegalArgumentException("No patient profile linked to this account"));
+    }
+
+    public PatientProfileResponse getMyProfile(String email) {
+        Patient patient = getPatientByEmail(email);
+        return new PatientProfileResponse(
+                patient.getId(),
+                patient.getUser().getFullName(),
+                patient.getUser().getEmail(),
+                patient.getUser().getRole().name(),
+                patient.getUser().getCreatedAt(),
+                patient.getUser().getGender(),
+                patient.getDateOfBirth(),
+                patient.getGender(),
+                patient.getPhone(),
+                patient.getAddress(),
+                patient.getBloodGroup()
+        );
     }
 }
