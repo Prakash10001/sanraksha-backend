@@ -32,5 +32,9 @@ public class User {
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Builder.Default
+    @Column(name = "must_reset_password", nullable = false)
+    private boolean mustResetPassword = false;
+
     private String gender;
 }

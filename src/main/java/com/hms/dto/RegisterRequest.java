@@ -21,5 +21,8 @@ public class RegisterRequest {
     // Optional, only relevant when role == DOCTOR
     private String specialization;
 
+    @Builder.Default
+    private Boolean mustResetPassword = false;
+
     private String gender;
 }
