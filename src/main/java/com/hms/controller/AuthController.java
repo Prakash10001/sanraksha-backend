@@ -7,6 +7,7 @@ import com.hms.service.EmailService;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -51,6 +52,17 @@ public class AuthController {
         return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
     }
   }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(Authentication authentication,
+                                            @Valid @RequestBody ChangePasswordRequest request) {
+        try {
+            authService.changePassword(authentication.getName(), request.getNewPassword());
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+        }
+    }
 
         @GetMapping(value = "/browser-reset", produces = MediaType.TEXT_HTML_VALUE)
         public ResponseEntity<String> browserReset(@RequestParam String token) {

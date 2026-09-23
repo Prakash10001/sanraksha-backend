@@ -33,11 +33,14 @@ public class AuthService {
             throw new IllegalArgumentException("An account with this email already exists");
         }
 
+        boolean mustResetPassword = Boolean.TRUE.equals(request.getMustResetPassword());
+
         User user = User.builder()
                 .fullName(request.getFullName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole())
+                .mustResetPassword(mustResetPassword)
                 .build();
         user = userRepository.save(user);
 
@@ -53,6 +56,7 @@ public class AuthService {
         } else if (request.getRole() == Role.PATIENT) {
             Patient patient = Patient.builder()
                     .user(user)
+                    .mustResetPassword(mustResetPassword)
                     .build();
             patientRepository.save(patient);
         }
@@ -64,7 +68,7 @@ public class AuthService {
         }
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
-        return new AuthResponse(token, user.getFullName(), user.getRole().name());
+        return new AuthResponse(token, user.getFullName(), user.getRole().name(), user.isMustResetPassword());
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -75,8 +79,13 @@ public class AuthService {
             throw new IllegalArgumentException("Invalid email or password");
         }
 
+        boolean patientResetRequired = patientRepository.findByUserId(user.getId())
+                .map(Patient::isMustResetPassword)
+                .orElse(false);
+        boolean mustResetPassword = user.isMustResetPassword() || patientResetRequired;
+
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
-        return new AuthResponse(token, user.getFullName(), user.getRole().name());
+        return new AuthResponse(token, user.getFullName(), user.getRole().name(), mustResetPassword);
     }
 
     public void requestPasswordReset(String email) {
@@ -98,8 +107,30 @@ public class AuthService {
 
         User user = resetToken.getUser();
         user.setPassword(passwordEncoder.encode(newPassword));
+        user.setMustResetPassword(false);
         userRepository.save(user);
+
+        patientRepository.findByUserId(user.getId()).ifPresent(patient -> {
+            patient.setMustResetPassword(false);
+            patientRepository.save(patient);
+        });
+
         resetToken.setUsed(true);
         passwordResetTokenRepository.save(resetToken);
+    }
+
+    @Transactional
+    public void changePassword(String email, String newPassword) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setMustResetPassword(false);
+        userRepository.save(user);
+
+        patientRepository.findByUserId(user.getId()).ifPresent(patient -> {
+            patient.setMustResetPassword(false);
+            patientRepository.save(patient);
+        });
     }
 }

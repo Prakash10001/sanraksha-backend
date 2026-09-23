@@ -31,6 +31,10 @@ public class Patient {
     @Column(length = 255)
     private String address;
 
+    @Builder.Default
+    @Column(name = "must_reset_password", nullable = false)
+    private boolean mustResetPassword = false;
+
     @Column(name = "blood_group", length = 5)
     private String bloodGroup;
 }
