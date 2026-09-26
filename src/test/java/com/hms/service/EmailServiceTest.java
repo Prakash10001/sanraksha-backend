@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import java.util.Properties;
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -49,5 +50,32 @@ class EmailServiceTest {
         ArgumentCaptor<MimeMessage> captor = ArgumentCaptor.forClass(MimeMessage.class);
         verify(mailSender).send(captor.capture());
         assertThat(captor.getValue().getSubject()).isEqualTo("Welcome to Sanraksha");
+    }
+
+    @Test
+    void sendAppointmentUpdateEmail_shouldSendProfessionalHtmlConfirmation() throws Exception {
+        Session session = Session.getInstance(new Properties());
+        MimeMessage mimeMessage = new MimeMessage(session);
+        when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
+
+        emailService.sendAppointmentUpdateEmail(
+                "patient@example.com",
+                "Aisha Patel",
+                "Dr. Rao",
+                LocalDateTime.of(2026, 10, 14, 10, 30),
+                "confirmed"
+        );
+
+        ArgumentCaptor<MimeMessage> captor = ArgumentCaptor.forClass(MimeMessage.class);
+        verify(mailSender).send(captor.capture());
+        MimeMessage sentMessage = captor.getValue();
+        assertThat(sentMessage.getSubject()).isEqualTo("Appointment Confirmed | Sanraksha");
+        assertThat(sentMessage.getContentType()).contains("text/html");
+        String html = (String) sentMessage.getContent();
+        assertThat(html).contains("Your appointment is confirmed");
+        assertThat(html).contains("Aisha Patel");
+        assertThat(html).contains("Dr. Rao");
+        assertThat(html).contains("October 14, 2026 at 10:30 AM");
+        assertThat(html).contains("Open patient portal");
     }
 }

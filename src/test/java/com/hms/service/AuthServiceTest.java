@@ -3,6 +3,7 @@ package com.hms.service;
 import com.hms.config.JwtUtil;
 import com.hms.dto.AuthResponse;
 import com.hms.dto.LoginRequest;
+import com.hms.entity.Doctor;
 import com.hms.entity.Patient;
 import com.hms.entity.Role;
 import com.hms.entity.User;
@@ -20,6 +21,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentCaptor.forClass;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -102,6 +105,37 @@ class AuthServiceTest {
 
         assertThat(response.isMustResetPassword()).isTrue();
         assertThat(response.getToken()).isEqualTo("jwt-patient");
+    }
+
+    @Test
+    void register_shouldCreateDoctorProfileLinkedToUser_forDoctor() {
+        com.hms.dto.RegisterRequest request = new com.hms.dto.RegisterRequest();
+        request.setFullName("Dr. Anita Sharma");
+        request.setEmail("anita.doctor@example.com");
+        request.setPassword("SecurePass123!");
+        request.setRole(Role.DOCTOR);
+        request.setSpecialization("Cardiology");
+
+        User savedUser = User.builder()
+                .id(4L)
+                .fullName("Dr. Anita Sharma")
+                .email("anita.doctor@example.com")
+                .password("encoded")
+                .role(Role.DOCTOR)
+                .build();
+
+        when(userRepository.existsByEmail("anita.doctor@example.com")).thenReturn(false);
+        when(passwordEncoder.encode("SecurePass123!")).thenReturn("encoded");
+        when(userRepository.save(org.mockito.ArgumentMatchers.any(User.class))).thenReturn(savedUser);
+        when(jwtUtil.generateToken("anita.doctor@example.com", "DOCTOR")).thenReturn("jwt-doctor");
+
+        AuthResponse response = authService.register(request);
+
+        var doctorCaptor = forClass(Doctor.class);
+        verify(doctorRepository).save(doctorCaptor.capture());
+        assertThat(doctorCaptor.getValue().getUser()).isSameAs(savedUser);
+        assertThat(doctorCaptor.getValue().getSpecialization()).isEqualTo("Cardiology");
+        assertThat(response.getRole()).isEqualTo("DOCTOR");
     }
 
     @Test

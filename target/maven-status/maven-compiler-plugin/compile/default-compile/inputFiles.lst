@@ -20,10 +20,12 @@ C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\co
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\dto\PatientProfileResponse.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\dto\RecentPatientResponse.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\dto\RegisterRequest.java
+C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\dto\RescheduleAppointmentRequest.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\dto\ResetPasswordRequest.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\dto\ScheduleItemResponse.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\dto\SymptomCheckRequest.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\dto\SymptomCheckResponse.java
+C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\dto\UpdatePatientProfileRequest.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\entity\Appointment.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\entity\Doctor.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\entity\MedicalRecord.java
