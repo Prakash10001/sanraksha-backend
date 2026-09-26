@@ -38,4 +38,7 @@ public class Appointment {
     @Builder.Default
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "cancelled_at")
+    private LocalDateTime cancelledAt;
 }
