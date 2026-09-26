@@ -3,6 +3,7 @@ package com.hms.controller;
 import com.hms.dto.AppointmentRequest;
 import com.hms.entity.Appointment;
 import com.hms.service.AppointmentService;
+import com.hms.service.DoctorService;
 import com.hms.service.PatientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.List;
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
+    private final DoctorService doctorService;
     private final PatientService patientService;
 
     @PostMapping
@@ -32,8 +34,20 @@ public class AppointmentController {
         return appointmentService.getForPatient(patient.getId());
     }
 
+    @GetMapping("/doctor/me")
+    public List<Appointment> myDoctorAppointments(Authentication auth) {
+        var doctor = doctorService.getDoctorByEmail(auth.getName());
+        return appointmentService.getForDoctor(doctor.getId());
+    }
+
+    @PatchMapping("/{id}/cancel")
+    public Appointment cancel(Authentication auth, @PathVariable Long id) {
+        return appointmentService.cancelForPatient(id, auth.getName());
+    }
+
     @PutMapping("/{id}/status")
-    public Appointment updateStatus(@PathVariable Long id, @RequestParam Appointment.Status status) {
-        return appointmentService.updateStatus(id, status);
+    public Appointment updateStatus(Authentication auth, @PathVariable Long id,
+                                    @RequestParam Appointment.Status status) {
+        return appointmentService.updateStatusForDoctor(id, status, auth.getName());
     }
 }
