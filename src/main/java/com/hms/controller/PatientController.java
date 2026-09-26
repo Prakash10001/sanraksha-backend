@@ -1,10 +1,14 @@
 package com.hms.controller;
 
 import com.hms.dto.PatientProfileResponse;
+import com.hms.dto.UpdatePatientProfileRequest;
 import com.hms.service.PatientService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,5 +22,12 @@ public class PatientController {
     @GetMapping("/me")
     public PatientProfileResponse getMyProfile(Authentication authentication) {
         return patientService.getMyProfile(authentication.getName());
+    }
+
+    @PutMapping("/me")
+    public PatientProfileResponse updateMyProfile(
+            Authentication authentication,
+            @Valid @RequestBody UpdatePatientProfileRequest request) {
+        return patientService.updateMyProfile(authentication.getName(), request);
     }
 }

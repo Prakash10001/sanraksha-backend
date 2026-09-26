@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,5 +142,82 @@ public class EmailService {
             log.error("SMTP failed while sending welcome email to {}", toEmail, exception);
             throw exception;
         }
+    }
+
+    public void sendAppointmentUpdateEmail(String toEmail, String patientName, String doctorName,
+                                           LocalDateTime appointmentDate, String action) {
+        String formattedDate = appointmentDate.format(DateTimeFormatter.ofPattern("MMMM d, yyyy 'at' h:mm a"));
+        String actionLabel = switch (action.toLowerCase()) {
+            case "confirmed" -> "Confirmed";
+            case "cancelled" -> "Cancelled";
+            case "rescheduled" -> "Rescheduled";
+            default -> throw new IllegalArgumentException("Unsupported appointment update action");
+        };
+        String subject = "Appointment " + actionLabel + " | Sanraksha";
+        String portalUrl = frontendUrl != null ? frontendUrl : "http://localhost:5173";
+        String html = """
+                <!doctype html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Appointment %s</title>
+                </head>
+                <body style="margin:0;padding:0;background:#f3f6f8;font-family:Arial,Helvetica,sans-serif;color:#24313d;">
+                    <table role="presentation" width="100%%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;background:#f3f6f8;">
+                        <tr><td align="center" style="padding:32px 16px;">
+                            <table role="presentation" width="100%%" cellspacing="0" cellpadding="0" style="max-width:600px;border-collapse:collapse;background:#ffffff;border:1px solid #dfe5e9;">
+                                <tr><td style="padding:22px 30px;background:#176b70;color:#ffffff;">
+                                    <div style="font-size:20px;font-weight:700;">Sanraksha</div>
+                                    <div style="margin-top:5px;font-size:12px;color:#e2f1f1;">HOSPITAL MANAGEMENT SYSTEM</div>
+                                </td></tr>
+                                <tr><td style="padding:32px 30px 16px;">
+                                    <p style="margin:0 0 10px;font-size:13px;font-weight:700;color:#176b70;text-transform:uppercase;">Appointment update</p>
+                                    <h1 style="margin:0 0 18px;font-size:25px;line-height:1.3;color:#1f2d38;">Your appointment is %s</h1>
+                                    <p style="margin:0;font-size:15px;line-height:1.65;color:#455461;">Hello %s, your appointment details are shown below.</p>
+                                </td></tr>
+                                <tr><td style="padding:8px 30px 26px;">
+                                    <table role="presentation" width="100%%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;border:1px solid #dfe5e9;">
+                                        <tr><td style="width:34%%;padding:13px 16px;border-bottom:1px solid #dfe5e9;font-size:13px;color:#667580;">Status</td><td style="padding:13px 16px;border-bottom:1px solid #dfe5e9;font-size:14px;font-weight:700;color:#24313d;">%s</td></tr>
+                                        <tr><td style="padding:13px 16px;border-bottom:1px solid #dfe5e9;font-size:13px;color:#667580;">Doctor</td><td style="padding:13px 16px;border-bottom:1px solid #dfe5e9;font-size:14px;color:#24313d;">%s</td></tr>
+                                        <tr><td style="padding:13px 16px;font-size:13px;color:#667580;">Date and time</td><td style="padding:13px 16px;font-size:14px;color:#24313d;">%s</td></tr>
+                                    </table>
+                                </td></tr>
+                                <tr><td style="padding:0 30px 28px;font-size:14px;line-height:1.65;color:#455461;">
+                                    View your appointment in the patient portal or contact the clinic if you have questions.
+                                    <p style="margin:20px 0 0;"><a href="%s" style="display:inline-block;padding:12px 18px;background:#176b70;color:#ffffff;text-decoration:none;font-size:14px;font-weight:700;">Open patient portal</a></p>
+                                </td></tr>
+                                <tr><td style="padding:18px 30px;border-top:1px solid #e5eaed;font-size:12px;line-height:1.5;color:#75828c;">
+                                    This is an automated appointment notification from Sanraksha. Please do not reply to this email.
+                                </td></tr>
+                            </table>
+                        </td></tr>
+                    </table>
+                </body>
+                </html>
+                """.formatted(
+                escapeHtml(actionLabel.toLowerCase()), escapeHtml(actionLabel.toLowerCase()),
+                escapeHtml(patientName), escapeHtml(actionLabel), escapeHtml(doctorName),
+                escapeHtml(formattedDate), escapeHtml(portalUrl)
+        );
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
+            helper.setTo(toEmail);
+            helper.setSubject(subject);
+            helper.setText(html, true);
+            mailSender.send(message);
+        } catch (MessagingException exception) {
+            throw new IllegalStateException("Unable to create appointment notification email", exception);
+        }
+    }
+
+    private String escapeHtml(String value) {
+        return value.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
     }
 }

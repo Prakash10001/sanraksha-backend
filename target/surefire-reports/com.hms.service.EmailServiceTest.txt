@@ -1,4 +1,16 @@
 -------------------------------------------------------------------------------
 Test set: com.hms.service.EmailServiceTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.692 s -- in com.hms.service.EmailServiceTest
+Tests run: 2, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.880 s <<< FAILURE! -- in com.hms.service.EmailServiceTest
+com.hms.service.EmailServiceTest.sendAppointmentUpdateEmail_shouldSendProfessionalHtmlConfirmation -- Time elapsed: 0.806 s <<< FAILURE!
+java.lang.AssertionError: 
+
+Expecting actual:
+  "text/plain"
+to contain:
+  "text/html" 
+	at com.hms.service.EmailServiceTest.sendAppointmentUpdateEmail_shouldSendProfessionalHtmlConfirmation(EmailServiceTest.java:73)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+

@@ -1,2 +1,4 @@
-com\hms\service\AuthServiceTest.class
+com\hms\service\PatientServiceTest.class
+com\hms\service\AppointmentServiceTest.class
 com\hms\service\EmailServiceTest.class
+com\hms\service\AuthServiceTest.class

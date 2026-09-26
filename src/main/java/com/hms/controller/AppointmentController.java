@@ -1,6 +1,7 @@
 package com.hms.controller;
 
 import com.hms.dto.AppointmentRequest;
+import com.hms.dto.RescheduleAppointmentRequest;
 import com.hms.entity.Appointment;
 import com.hms.service.AppointmentService;
 import com.hms.service.DoctorService;
@@ -49,5 +50,11 @@ public class AppointmentController {
     public Appointment updateStatus(Authentication auth, @PathVariable Long id,
                                     @RequestParam Appointment.Status status) {
         return appointmentService.updateStatusForDoctor(id, status, auth.getName());
+    }
+
+    @PatchMapping("/{id}/reschedule")
+    public Appointment reschedule(Authentication auth, @PathVariable Long id,
+                                  @Valid @RequestBody RescheduleAppointmentRequest request) {
+        return appointmentService.rescheduleForPatient(id, request.getAppointmentDate(), auth.getName());
     }
 }

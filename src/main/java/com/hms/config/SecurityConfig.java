@@ -35,8 +35,10 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/forgot-password",
                         "/api/auth/reset-password", "/api/auth/browser-reset").permitAll()
                 .requestMatchers("/api/auth/change-password").authenticated()

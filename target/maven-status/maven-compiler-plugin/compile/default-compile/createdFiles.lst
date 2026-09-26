@@ -1,9 +1,11 @@
 com\hms\entity\PasswordResetToken.class
 com\hms\dto\AdminStatsResponse.class
 com\hms\dto\PatientProfileResponse.class
+com\hms\dto\RescheduleAppointmentRequest.class
 com\hms\dto\ChangePasswordRequest.class
 com\hms\controller\PatientController.class
 com\hms\repository\PasswordResetTokenRepository.class
+com\hms\dto\UpdatePatientProfileRequest.class
 com\hms\dto\ErrorResponse.class
 com\hms\dto\RecentPatientResponse.class
 com\hms\entity\Doctor$DoctorBuilder.class
