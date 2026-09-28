@@ -3,9 +3,11 @@ C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\co
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\config\JwtUtil.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\config\SecurityConfig.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\controller\AdminController.java
+C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\controller\AdminDoctorController.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\controller\AppointmentController.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\controller\AuthController.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\controller\DoctorController.java
+C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\controller\DoctorProfileController.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\controller\MedicalRecordController.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\controller\PatientController.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\controller\SymptomController.java
@@ -13,6 +15,7 @@ C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\co
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\dto\AppointmentRequest.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\dto\AuthResponse.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\dto\ChangePasswordRequest.java
+C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\dto\DoctorProfileResponse.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\dto\ErrorResponse.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\dto\ForgotPasswordRequest.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\dto\LoginRequest.java
@@ -28,6 +31,7 @@ C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\co
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\dto\UpdatePatientProfileRequest.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\entity\Appointment.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\entity\Doctor.java
+C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\entity\DoctorApprovalStatus.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\entity\MedicalRecord.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\entity\PasswordResetToken.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\entity\Patient.java
@@ -45,6 +49,7 @@ C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\co
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\service\AdminService.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\service\AppointmentService.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\service\AuthService.java
+C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\service\DoctorProfileService.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\service\DoctorService.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\service\EmailService.java
 C:\Users\praka\Downloads\Hospital-Management-System\hms\backend\src\main\java\com\hms\service\MedicalRecordService.java
