@@ -34,13 +34,25 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String token = header.substring(7);
 
             if (jwtUtil.isTokenValid(token)) {
+                System.out.println("========== JWT DEBUG ==========");
+                 System.out.println("JWT VALID");
                 String email = jwtUtil.extractEmail(token);
                 String role = jwtUtil.extractRole(token);
-
+                            System.out.println("JWT EMAIL: " + email);
+System.out.println("JWT ROLE: " + role);
                 var authToken = new UsernamePasswordAuthenticationToken(
                         email, null, List.of(new SimpleGrantedAuthority("ROLE_" + role))
                 );
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+                System.out.println("AUTHENTICATED: "
+        + SecurityContextHolder.getContext()
+                .getAuthentication()
+                .isAuthenticated());
+
+System.out.println("AUTHORITIES: "
+        + SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getAuthorities());
             }
         }
 

@@ -12,7 +12,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
+import org.springframework.http.HttpMethod; // NEW
 import java.util.List;
 
 @Configuration
@@ -39,10 +39,12 @@ public class SecurityConfig {
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/h2-console/**").permitAll()
+                .requestMatchers("/error").permitAll()
                 .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/forgot-password",
                         "/api/auth/reset-password", "/api/auth/browser-reset").permitAll()
                 .requestMatchers("/api/auth/change-password").authenticated()
                 .requestMatchers("/reset-password").permitAll()
+              //  .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // NEW
                 .requestMatchers("/api/doctors/**").authenticated()
                 .requestMatchers("/api/appointments/**").authenticated()
                 .requestMatchers("/api/symptom-check/**").authenticated()

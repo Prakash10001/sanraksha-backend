@@ -1,10 +1,14 @@
 com\hms\entity\PasswordResetToken.class
+com\hms\controller\DoctorProfileController.class
 com\hms\dto\AdminStatsResponse.class
 com\hms\dto\PatientProfileResponse.class
 com\hms\dto\RescheduleAppointmentRequest.class
+com\hms\dto\DoctorProfileResponse.class
 com\hms\dto\ChangePasswordRequest.class
 com\hms\controller\PatientController.class
+com\hms\entity\DoctorApprovalStatus.class
 com\hms\repository\PasswordResetTokenRepository.class
+com\hms\controller\AdminDoctorController$ApprovalRequest.class
 com\hms\dto\UpdatePatientProfileRequest.class
 com\hms\dto\ErrorResponse.class
 com\hms\dto\RecentPatientResponse.class
@@ -19,4 +23,7 @@ com\hms\entity\SymptomCheck$SymptomCheckBuilder.class
 com\hms\controller\AdminController.class
 com\hms\dto\ScheduleItemResponse.class
 com\hms\dto\ResetPasswordRequest.class
+com\hms\controller\AdminDoctorController.class
+com\hms\service\DoctorProfileService.class
+com\hms\dto\DoctorProfileResponse$DoctorProfileResponseBuilder.class
 com\hms\entity\Appointment$AppointmentBuilder.class
