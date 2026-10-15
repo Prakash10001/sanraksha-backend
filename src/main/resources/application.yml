@@ -14,17 +14,27 @@ server:
 #       hibernate:
 #         format_sql: true
 #     open-in-view: false
+# spring:
+#   datasource:
+#     url: jdbc:h2:mem:hospitaldb
+#     driver-class-name: org.h2.Driver
+#     username: sa
+#     password:
+
 spring:
   datasource:
-    url: jdbc:h2:mem:hospitaldb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-
+    url: ${DB_URL:jdbc:mysql://localhost:3306/hospitaldb}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:Prakash1234#}
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
-    database-platform: org.hibernate.dialect.H2Dialect
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQLDialect
+  # jpa:
+  #   hibernate:
+  #     ddl-auto: create-drop
+  #   database-platform: org.hibernate.dialect.H2Dialect
 
   h2:
     console:
