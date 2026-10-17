@@ -45,10 +45,12 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/change-password").authenticated()
                 .requestMatchers("/reset-password").permitAll()
               //  .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // NEW
+                .requestMatchers("/api/doctors/me/patients").hasRole("DOCTOR")
                 .requestMatchers("/api/doctors/**").authenticated()
                 .requestMatchers("/api/appointments/**").authenticated()
                 .requestMatchers("/api/symptom-check/**").authenticated()
                 .requestMatchers("/api/records/**").authenticated()
+                .requestMatchers("/api/patient/billing/**").hasRole("PATIENT")
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )

@@ -14,17 +14,31 @@ server:
 #       hibernate:
 #         format_sql: true
 #     open-in-view: false
-spring:
-  datasource:
-    url: jdbc:h2:mem:hospitaldb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+# spring:
+#   datasource:
+#     url: jdbc:h2:mem:hospitaldb
+#     driver-class-name: org.h2.Driver
+#     username: sa
+#     password:
 
+spring:
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/hospitaldb}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:Prakash1234#}
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
-    database-platform: org.hibernate.dialect.H2Dialect
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQLDialect
+  # jpa:
+  #   hibernate:
+  #     ddl-auto: create-drop
+  #   database-platform: org.hibernate.dialect.H2Dialect
 
   h2:
     console:
@@ -48,6 +62,10 @@ app:
     expiration-ms: 86400000 # 24 hours
   frontend-url: http://localhost:5173
   reset-url: http://localhost:8080/api/auth/browser-reset
+
+razorpay:
+  key-id: ${RAZORPAY_KEY_ID:}
+  key-secret: ${RAZORPAY_KEY_SECRET:}
 
 ai-service:
   base-url: http://localhost:8000

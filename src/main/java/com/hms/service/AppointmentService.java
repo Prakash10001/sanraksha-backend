@@ -1,15 +1,21 @@
 package com.hms.service;
 
 import com.hms.dto.AppointmentRequest;
+import com.hms.dto.DoctorPatientAppointmentResponse;
+import com.hms.dto.DoctorPatientResponse;
 import com.hms.entity.*;
 import com.hms.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +31,10 @@ public class AppointmentService {
 
     public Appointment book(String patientEmail, AppointmentRequest request) {
         Patient patient = patientService.getPatientByEmail(patientEmail);
+        return bookForPatient(patient, request);
+    }
 
+    public Appointment bookForPatient(Patient patient, AppointmentRequest request) {
         Doctor doctor = doctorRepository.findById(request.getDoctorId())
                 .orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
 
@@ -46,6 +55,33 @@ public class AppointmentService {
 
     public List<Appointment> getForDoctor(Long doctorId) {
         return appointmentRepository.findByDoctorId(doctorId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<DoctorPatientResponse> getPatientsForDoctor(String doctorEmail) {
+        Doctor doctor = doctorService.getDoctorByEmail(doctorEmail);
+        Map<Long, DoctorPatientResponse> patientsById = new TreeMap<>();
+
+        for (Appointment appointment : appointmentRepository.findByDoctorId(doctor.getId())) {
+            Patient patient = appointment.getPatient();
+            if (patient == null || patient.getId() == null) continue;
+
+            DoctorPatientResponse response = patientsById.computeIfAbsent(patient.getId(), patientId ->
+                    new DoctorPatientResponse(
+                            patient.getId(),
+                            "PT-" + String.format("%05d", patient.getId()),
+                            patient.getUser() == null ? null : patient.getUser().getFullName(),
+                            patient.getGender(),
+                            new ArrayList<>()
+                    ));
+            response.getAppointments().add(new DoctorPatientAppointmentResponse(
+                    appointment.getId(),
+                    appointment.getAppointmentDate(),
+                    appointment.getStatus()
+            ));
+        }
+
+        return List.copyOf(patientsById.values());
     }
 
     public Appointment updateStatus(Long appointmentId, Appointment.Status status) {

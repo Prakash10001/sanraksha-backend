@@ -1,8 +1,11 @@
 package com.hms.controller;
 
+import com.hms.dto.DoctorPatientResponse;
 import com.hms.entity.Doctor;
+import com.hms.service.AppointmentService;
 import com.hms.service.DoctorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +16,7 @@ import java.util.List;
 public class DoctorController {
 
     private final DoctorService doctorService;
+    private final AppointmentService appointmentService;
 
     @GetMapping
     public List<Doctor> getAll() {
@@ -22,5 +26,10 @@ public class DoctorController {
     @GetMapping("/search")
     public List<Doctor> search(@RequestParam String specialization) {
         return doctorService.searchBySpecialization(specialization);
+    }
+
+    @GetMapping("/me/patients")
+    public List<DoctorPatientResponse> getMyPatients(Authentication authentication) {
+        return appointmentService.getPatientsForDoctor(authentication.getName());
     }
 }
