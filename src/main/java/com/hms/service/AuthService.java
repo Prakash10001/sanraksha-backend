@@ -30,6 +30,10 @@ public class AuthService {
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
+        if (request.getRole() == Role.ADMIN || request.getRole() == Role.LAB_TECH) {
+            throw new IllegalArgumentException("This account role cannot be self-registered");
+        }
+
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("An account with this email already exists");
         }

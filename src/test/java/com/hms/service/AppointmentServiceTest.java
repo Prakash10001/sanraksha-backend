@@ -4,6 +4,7 @@ import com.hms.entity.Appointment;
 import com.hms.entity.Doctor;
 import com.hms.entity.Patient;
 import com.hms.entity.User;
+import com.hms.dto.DoctorPatientResponse;
 import com.hms.repository.AppointmentRepository;
 import com.hms.repository.DoctorRepository;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -92,5 +94,32 @@ class AppointmentServiceTest {
 
         verify(appointmentRepository, never()).save(any());
         verifyNoInteractions(emailService);
+    }
+
+    @Test
+    void getPatientsForDoctor_returnsUniquePatientsFromThatDoctorsAppointments() {
+        Doctor doctor = Doctor.builder().id(4L).build();
+        Patient patient = Patient.builder()
+                .id(12L)
+                .gender("F")
+                .user(User.builder().fullName("Anita Sharma").build())
+                .build();
+        Appointment firstAppointment = Appointment.builder().id(21L).patient(patient).build();
+        Appointment secondAppointment = Appointment.builder().id(22L).patient(patient).build();
+
+        when(doctorService.getDoctorByEmail("doctor@example.com")).thenReturn(doctor);
+        when(appointmentRepository.findByDoctorId(4L)).thenReturn(List.of(firstAppointment, secondAppointment));
+
+        List<DoctorPatientResponse> result = appointmentService.getPatientsForDoctor("doctor@example.com");
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getPatientId()).isEqualTo(12L);
+        assertThat(result.get(0).getPatientCode()).isEqualTo("PT-00012");
+        assertThat(result.get(0).getFullName()).isEqualTo("Anita Sharma");
+        assertThat(result.get(0).getGender()).isEqualTo("F");
+        assertThat(result.get(0).getAppointments())
+                .extracting("appointmentId")
+                .containsExactly(21L, 22L);
+        verify(appointmentRepository).findByDoctorId(4L);
     }
 }
