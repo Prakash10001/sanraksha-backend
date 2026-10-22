@@ -44,6 +44,10 @@ public class PatientService {
     @Transactional
     public PatientProfileResponse updateMyProfile(String email, UpdatePatientProfileRequest request) {
         Patient patient = getPatientByEmail(email);
+        if (request.getFullName() != null && !request.getFullName().isBlank()) {
+            patient.getUser().setFullName(request.getFullName().trim());
+            userRepository.save(patient.getUser());
+        }
         patient.setPhone(request.getPhone().trim());
         patient.setGender(request.getGender().trim());
         patient.setDateOfBirth(request.getDateOfBirth());

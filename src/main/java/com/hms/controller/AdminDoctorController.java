@@ -4,10 +4,16 @@ import com.hms.dto.DoctorProfileResponse;
 import com.hms.entity.Doctor;
 import com.hms.entity.DoctorApprovalStatus;
 import com.hms.repository.DoctorRepository;
+import com.hms.service.DoctorProfileService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
@@ -16,21 +22,27 @@ import java.util.List;
 public class AdminDoctorController {
 
     private final DoctorRepository doctorRepository;
+    private final DoctorProfileService doctorProfileService;
 
     @GetMapping
-    public List<Doctor> getDoctorApplications(
+    public List<DoctorProfileResponse> getDoctorApplications(
             @RequestParam(required = false) String status) {
+        return doctorProfileService.getApplications(status);
+    }
 
-        if (status == null || status.isBlank()) {
-            return doctorRepository.findAll();
-        }
-
-        DoctorApprovalStatus approvalStatus =
-                DoctorApprovalStatus.valueOf(status.toUpperCase());
-
-        return doctorRepository.findAll().stream()
-                .filter(doctor -> doctor.getApprovalStatus() == approvalStatus)
-                .toList();
+    @GetMapping("/{doctorId}/identity-document")
+    public ResponseEntity<byte[]> identityDocument(@PathVariable Long doctorId) throws IOException {
+        DoctorProfileService.IdentityDocument file = doctorProfileService.getIdentityDocument(doctorId);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(file.contentType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.inline()
+                        .filename(file.filename(), StandardCharsets.UTF_8)
+                        .build()
+                        .toString())
+                .header(HttpHeaders.CACHE_CONTROL, "no-store, private")
+                .header("X-Content-Type-Options", "nosniff")
+                .contentLength(file.content().length)
+                .body(file.content());
     }
 
     @PatchMapping("/{doctorId}/approval")

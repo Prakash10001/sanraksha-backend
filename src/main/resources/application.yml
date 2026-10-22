@@ -22,6 +22,8 @@ server:
 #     password:
 
 spring:
+  config:
+    import: optional:file:./application-local.yml
   servlet:
     multipart:
       max-file-size: 5MB

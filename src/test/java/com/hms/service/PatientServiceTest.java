@@ -47,6 +47,7 @@ class PatientServiceTest {
                 .user(user)
                 .build();
         UpdatePatientProfileRequest request = new UpdatePatientProfileRequest();
+        request.setFullName("Anita Sharma Updated");
         request.setPhone("+1 555 123 4567");
         request.setGender("Female");
         request.setDateOfBirth(LocalDate.of(1990, 5, 20));
@@ -60,6 +61,7 @@ class PatientServiceTest {
         var response = patientService.updateMyProfile("anita@example.com", request);
 
         verify(patientRepository).save(patient);
+        assertThat(user.getFullName()).isEqualTo("Anita Sharma Updated");
         assertThat(patient.getPhone()).isEqualTo("+1 555 123 4567");
         assertThat(patient.getGender()).isEqualTo("Female");
         assertThat(patient.getDateOfBirth()).isEqualTo(LocalDate.of(1990, 5, 20));

@@ -190,4 +190,5 @@ public class AppointmentService {
             log.error("Could not send appointment {} email for appointment {}", action, appointment.getId(), exception);
         }
     }
+
 }
