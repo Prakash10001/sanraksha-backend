@@ -5,6 +5,7 @@ import com.hms.entity.Doctor;
 import com.hms.entity.Patient;
 import com.hms.entity.User;
 import com.hms.dto.DoctorPatientResponse;
+import com.hms.dto.AppointmentRequest;
 import com.hms.repository.AppointmentRepository;
 import com.hms.repository.DoctorRepository;
 import org.junit.jupiter.api.Test;
@@ -41,6 +42,35 @@ class AppointmentServiceTest {
 
     @InjectMocks
     private AppointmentService appointmentService;
+
+    @Test
+    void bookForPatient_shouldSaveAndNotifyPatientOfRequest() {
+        Patient patient = Patient.builder()
+                .id(12L)
+                .user(User.builder().email("patient@example.com").fullName("Anita Sharma").build())
+                .build();
+        Doctor doctor = Doctor.builder()
+                .id(7L)
+                .user(User.builder().fullName("Dr. Sharma").build())
+                .build();
+        LocalDateTime appointmentDate = LocalDateTime.of(2027, 1, 15, 9, 0);
+        AppointmentRequest request = new AppointmentRequest();
+        request.setDoctorId(7L);
+        request.setAppointmentDate(appointmentDate);
+
+        when(doctorRepository.findById(7L)).thenReturn(Optional.of(doctor));
+        when(appointmentRepository.save(any(Appointment.class))).thenAnswer(invocation -> {
+            Appointment appointment = invocation.getArgument(0);
+            appointment.setId(1L);
+            return appointment;
+        });
+
+        Appointment result = appointmentService.bookForPatient(patient, request);
+
+        assertThat(result.getStatus()).isEqualTo(Appointment.Status.PENDING);
+        verify(emailService).sendAppointmentUpdateEmail(
+                "patient@example.com", "Anita Sharma", "Dr. Sharma", appointmentDate, "requested");
+    }
 
     @Test
     void rescheduleForPatient_shouldSaveAndNotify_whenPatientOwnsAppointment() {

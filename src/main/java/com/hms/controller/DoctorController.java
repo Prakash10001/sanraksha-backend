@@ -1,7 +1,7 @@
 package com.hms.controller;
 
+import com.hms.dto.DoctorSummaryResponse;
 import com.hms.dto.DoctorPatientResponse;
-import com.hms.entity.Doctor;
 import com.hms.service.AppointmentService;
 import com.hms.service.DoctorService;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +19,12 @@ public class DoctorController {
     private final AppointmentService appointmentService;
 
     @GetMapping
-    public List<Doctor> getAll() {
+    public List<DoctorSummaryResponse> getAll() {
         return doctorService.getAll();
     }
 
     @GetMapping("/search")
-    public List<Doctor> search(@RequestParam String specialization) {
+    public List<DoctorSummaryResponse> search(@RequestParam String specialization) {
         return doctorService.searchBySpecialization(specialization);
     }
 

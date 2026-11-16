@@ -1,6 +1,8 @@
 package com.hms.controller;
 
 import com.hms.dto.PatientProfileResponse;
+import com.hms.dto.PatientHealthInfoRequest;
+import com.hms.dto.PatientHealthInfoResponse;
 import com.hms.dto.UpdatePatientProfileRequest;
 import com.hms.service.PatientService;
 import jakarta.validation.Valid;
@@ -29,5 +31,17 @@ public class PatientController {
             Authentication authentication,
             @Valid @RequestBody UpdatePatientProfileRequest request) {
         return patientService.updateMyProfile(authentication.getName(), request);
+    }
+
+    @GetMapping("/me/health-info")
+    public PatientHealthInfoResponse getMyHealthInfo(Authentication authentication) {
+        return patientService.getMyHealthInfo(authentication.getName());
+    }
+
+    @PutMapping("/me/health-info")
+    public PatientHealthInfoResponse updateMyHealthInfo(
+            Authentication authentication,
+            @Valid @RequestBody PatientHealthInfoRequest request) {
+        return patientService.updateMyHealthInfo(authentication.getName(), request);
     }
 }

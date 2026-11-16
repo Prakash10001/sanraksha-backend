@@ -44,6 +44,8 @@ public class DoctorProfileResponse {
     // NEW
     private boolean identityDocumentSubmitted;
 
+    private String identityDocumentOriginalName;
+
     // NEW
     private LocalDateTime submittedAt;
 }

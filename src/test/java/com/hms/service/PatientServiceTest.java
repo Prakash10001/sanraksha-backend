@@ -1,6 +1,7 @@
 package com.hms.service;
 
 import com.hms.dto.UpdatePatientProfileRequest;
+import com.hms.dto.PatientHealthInfoRequest;
 import com.hms.entity.Patient;
 import com.hms.entity.Role;
 import com.hms.entity.User;
@@ -47,6 +48,7 @@ class PatientServiceTest {
                 .user(user)
                 .build();
         UpdatePatientProfileRequest request = new UpdatePatientProfileRequest();
+        request.setFullName("Anita Sharma Updated");
         request.setPhone("+1 555 123 4567");
         request.setGender("Female");
         request.setDateOfBirth(LocalDate.of(1990, 5, 20));
@@ -60,6 +62,7 @@ class PatientServiceTest {
         var response = patientService.updateMyProfile("anita@example.com", request);
 
         verify(patientRepository).save(patient);
+        assertThat(user.getFullName()).isEqualTo("Anita Sharma Updated");
         assertThat(patient.getPhone()).isEqualTo("+1 555 123 4567");
         assertThat(patient.getGender()).isEqualTo("Female");
         assertThat(patient.getDateOfBirth()).isEqualTo(LocalDate.of(1990, 5, 20));
@@ -110,5 +113,58 @@ class PatientServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("No patient profile linked to this account");
         verify(patientRepository, never()).save(org.mockito.ArgumentMatchers.any(Patient.class));
+    }
+
+    @Test
+    void updateMyHealthInfo_shouldSavePatientReportedDetails() {
+        User user = User.builder()
+                .id(4L)
+                .fullName("Anita Sharma")
+                .email("anita@example.com")
+                .role(Role.PATIENT)
+                .build();
+        Patient patient = Patient.builder().id(9L).user(user).build();
+        PatientHealthInfoRequest request = new PatientHealthInfoRequest();
+        request.setReportedAllergies("  Penicillin  ");
+        request.setReportedConditions("Asthma");
+
+        when(userRepository.findByEmail("anita@example.com")).thenReturn(Optional.of(user));
+        when(patientRepository.findByUserId(4L)).thenReturn(Optional.of(patient));
+        when(patientRepository.save(patient)).thenReturn(patient);
+
+        var response = patientService.updateMyHealthInfo("anita@example.com", request);
+
+        verify(patientRepository).save(patient);
+        assertThat(response.patientId()).isEqualTo(9L);
+        assertThat(response.reportedAllergies()).isEqualTo("Penicillin");
+        assertThat(response.reportedConditions()).isEqualTo("Asthma");
+        assertThat(response.updatedAt()).isNotNull();
+    }
+
+    @Test
+    void updateMyHealthInfo_shouldClearBlankPatientReportedDetails() {
+        User user = User.builder()
+                .id(4L)
+                .email("anita@example.com")
+                .role(Role.PATIENT)
+                .build();
+        Patient patient = Patient.builder()
+                .id(9L)
+                .user(user)
+                .reportedAllergies("Penicillin")
+                .reportedConditions("Asthma")
+                .build();
+        PatientHealthInfoRequest request = new PatientHealthInfoRequest();
+        request.setReportedAllergies(" ");
+        request.setReportedConditions(null);
+
+        when(userRepository.findByEmail("anita@example.com")).thenReturn(Optional.of(user));
+        when(patientRepository.findByUserId(4L)).thenReturn(Optional.of(patient));
+        when(patientRepository.save(patient)).thenReturn(patient);
+
+        var response = patientService.updateMyHealthInfo("anita@example.com", request);
+
+        assertThat(response.reportedAllergies()).isNull();
+        assertThat(response.reportedConditions()).isNull();
     }
 }

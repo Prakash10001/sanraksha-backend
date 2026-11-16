@@ -6,6 +6,7 @@ import lombok.*;
 @AllArgsConstructor
 public class AdminStatsResponse {
     private long totalPatients;
+    private long patientsRegisteredToday;
     private long totalDoctors;
     private long appointmentsToday;
     private long pendingAppointments;

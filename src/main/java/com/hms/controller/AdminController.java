@@ -56,6 +56,11 @@ public class AdminController {
         return adminService.getPatients(page, size, search);
     }
 
+    @GetMapping("/patients/registered-today")
+    public List<AdminPatientResponse> patientsRegisteredToday() {
+        return adminService.getPatientsRegisteredToday();
+    }
+
     @GetMapping("/patients/{patientId}/appointments")
     public List<AdminAppointmentResponse> patientAppointments(@PathVariable Long patientId) {
         return adminService.getPatientAppointments(patientId);

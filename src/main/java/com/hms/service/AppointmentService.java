@@ -46,7 +46,9 @@ public class AppointmentService {
                 .status(Appointment.Status.PENDING)
                 .build();
 
-        return appointmentRepository.save(appointment);
+        Appointment saved = appointmentRepository.save(appointment);
+        notifyPatient(saved, "requested");
+        return saved;
     }
 
     public List<Appointment> getForPatient(Long patientId) {
@@ -72,6 +74,9 @@ public class AppointmentService {
                             "PT-" + String.format("%05d", patient.getId()),
                             patient.getUser() == null ? null : patient.getUser().getFullName(),
                             patient.getGender(),
+                            patient.getReportedAllergies(),
+                            patient.getReportedConditions(),
+                            patient.getHealthInfoUpdatedAt(),
                             new ArrayList<>()
                     ));
             response.getAppointments().add(new DoctorPatientAppointmentResponse(
@@ -190,4 +195,5 @@ public class AppointmentService {
             log.error("Could not send appointment {} email for appointment {}", action, appointment.getId(), exception);
         }
     }
+
 }

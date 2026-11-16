@@ -3,6 +3,7 @@ package com.hms.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "patients")
@@ -37,4 +38,13 @@ public class Patient {
 
     @Column(name = "blood_group", length = 5)
     private String bloodGroup;
+
+    @Column(name = "reported_allergies", columnDefinition = "TEXT")
+    private String reportedAllergies;
+
+    @Column(name = "reported_conditions", columnDefinition = "TEXT")
+    private String reportedConditions;
+
+    @Column(name = "health_info_updated_at")
+    private LocalDateTime healthInfoUpdatedAt;
 }

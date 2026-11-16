@@ -18,6 +18,9 @@ public class EmailService {
     private static final Logger log = LoggerFactory.getLogger(EmailService.class);
     private final JavaMailSender mailSender;
 
+    @Value("${spring.mail.username}")
+    private String senderEmail;
+
     @Value("${app.reset-url}")
     private String resetUrl;
 
@@ -59,6 +62,7 @@ public class EmailService {
                         MimeMessage message = mailSender.createMimeMessage();
                         MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
                         helper.setTo(toEmail);
+                        helper.setFrom(senderEmail);
                         helper.setSubject("Reset your Sanraksha password");
                         helper.setText(html, true);
                         mailSender.send(message);
@@ -130,7 +134,7 @@ public class EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
             helper.setTo(toEmail);
-            helper.setFrom("noreply@sanraksha.com");
+            helper.setFrom(senderEmail);
             helper.setSubject("Welcome to Sanraksha");
             helper.setText(html, true);
             mailSender.send(message);
@@ -148,9 +152,17 @@ public class EmailService {
                                            LocalDateTime appointmentDate, String action) {
         String formattedDate = appointmentDate.format(DateTimeFormatter.ofPattern("MMMM d, yyyy 'at' h:mm a"));
         String actionLabel = switch (action.toLowerCase()) {
+            case "requested" -> "Request Received";
             case "confirmed" -> "Confirmed";
             case "cancelled" -> "Cancelled";
             case "rescheduled" -> "Rescheduled";
+            default -> throw new IllegalArgumentException("Unsupported appointment update action");
+        };
+        String statusMessage = switch (action.toLowerCase()) {
+            case "requested" -> "request has been received and is pending confirmation";
+            case "confirmed" -> "is confirmed";
+            case "cancelled" -> "is cancelled";
+            case "rescheduled" -> "has been rescheduled";
             default -> throw new IllegalArgumentException("Unsupported appointment update action");
         };
         String subject = "Appointment " + actionLabel + " | Sanraksha";
@@ -173,7 +185,7 @@ public class EmailService {
                                 </td></tr>
                                 <tr><td style="padding:32px 30px 16px;">
                                     <p style="margin:0 0 10px;font-size:13px;font-weight:700;color:#176b70;text-transform:uppercase;">Appointment update</p>
-                                    <h1 style="margin:0 0 18px;font-size:25px;line-height:1.3;color:#1f2d38;">Your appointment is %s</h1>
+                                    <h1 style="margin:0 0 18px;font-size:25px;line-height:1.3;color:#1f2d38;">Your appointment %s</h1>
                                     <p style="margin:0;font-size:15px;line-height:1.65;color:#455461;">Hello %s, your appointment details are shown below.</p>
                                 </td></tr>
                                 <tr><td style="padding:8px 30px 26px;">
@@ -196,7 +208,7 @@ public class EmailService {
                 </body>
                 </html>
                 """.formatted(
-                escapeHtml(actionLabel.toLowerCase()), escapeHtml(actionLabel.toLowerCase()),
+                escapeHtml(actionLabel.toLowerCase()), escapeHtml(statusMessage),
                 escapeHtml(patientName), escapeHtml(actionLabel), escapeHtml(doctorName),
                 escapeHtml(formattedDate), escapeHtml(portalUrl)
         );
@@ -205,6 +217,7 @@ public class EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
             helper.setTo(toEmail);
+            helper.setFrom(senderEmail);
             helper.setSubject(subject);
             helper.setText(html, true);
             mailSender.send(message);

@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -105,7 +106,7 @@ public class BillingService {
         }
         requireGatewayConfigured();
 
-        if (invoice.getGatewayOrderId() != null) {
+        if (invoice.getGatewayOrderId() != null && razorpayKeyId.equals(invoice.getGatewayKeyId())) {
             return toOrderResponse(invoice, invoice.getGatewayOrderId());
         }
 
@@ -135,6 +136,7 @@ public class BillingService {
             throw new PaymentGatewayException("Razorpay returned an invalid order response.");
         }
         invoice.setGatewayOrderId(order.id());
+        invoice.setGatewayKeyId(razorpayKeyId);
         invoiceRepository.save(invoice);
         return toOrderResponse(invoice, order.id());
     }
@@ -182,8 +184,7 @@ public class BillingService {
 
         RazorpayPayment payment = fetchPayment(request.razorpayPaymentId());
         if (!request.razorpayOrderId().equals(payment.orderId())
-                || payment.amount() == null
-                || payment.amount() != invoice.getAmountPaise()
+                || !Objects.equals(payment.amount(), invoice.getAmountPaise())
                 || !invoice.getCurrency().equals(payment.currency())) {
             throw new IllegalArgumentException("The payment details do not match this invoice");
         }

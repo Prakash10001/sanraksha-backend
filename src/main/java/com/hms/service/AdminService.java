@@ -117,13 +117,14 @@ public class AdminService {
         LocalDateTime endOfDay = LocalDate.now().atTime(LocalTime.MAX);
 
         long totalPatients = patientRepository.count();
+        long patientsRegisteredToday = patientRepository.countByUser_CreatedAtBetween(startOfDay, endOfDay);
         long totalDoctors = doctorRepository.count();
         long appointmentsToday = appointmentRepository
                 .findByAppointmentDateBetween(startOfDay, endOfDay).size();
         long pendingAppointments = appointmentRepository
                 .countByStatus(Appointment.Status.PENDING);
 
-        return new AdminStatsResponse(totalPatients, totalDoctors, appointmentsToday, pendingAppointments);
+        return new AdminStatsResponse(totalPatients, patientsRegisteredToday, totalDoctors, appointmentsToday, pendingAppointments);
     }
 
     @Transactional(readOnly = true)
@@ -134,15 +135,29 @@ public class AdminService {
                 ? patientRepository.findAll(pageable)
                 : patientRepository.findByUser_FullNameContainingIgnoreCaseOrUser_EmailContainingIgnoreCase(
                         query, query, pageable);
-        return patientPage.map(patient -> new AdminPatientResponse(
+        return patientPage.map(this::toAdminPatientResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public List<AdminPatientResponse> getPatientsRegisteredToday() {
+        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+        LocalDateTime endOfDay = LocalDate.now().atTime(LocalTime.MAX);
+        return patientRepository.findByUser_CreatedAtBetweenOrderByUser_CreatedAtDesc(startOfDay, endOfDay)
+                .stream()
+                .map(this::toAdminPatientResponse)
+                .toList();
+    }
+
+    private AdminPatientResponse toAdminPatientResponse(Patient patient) {
+        return new AdminPatientResponse(
                 patient.getId(),
                 "PT-" + String.format("%05d", patient.getId()),
                 patient.getUser().getFullName(),
                 patient.getUser().getEmail(),
-                patient.getGender(),
+                patient.getGender() != null ? patient.getGender() : patient.getUser().getGender(),
                 patient.getPhone(),
                 patient.getUser().getCreatedAt()
-        ));
+        );
     }
 
     @Transactional(readOnly = true)
@@ -219,7 +234,8 @@ public class AdminService {
                 .map(p -> new RecentPatientResponse(
                         p.getUser().getFullName(),
                         "PT-" + String.format("%05d", p.getId()),
-                        p.getGender(),
+                        p.getGender() != null ? p.getGender() : p.getUser().getGender(),
+                        p.getPhone(),
                         p.getUser().getCreatedAt() != null
                                 ? p.getUser().getCreatedAt().toLocalDate().toString()
                                 : "—"

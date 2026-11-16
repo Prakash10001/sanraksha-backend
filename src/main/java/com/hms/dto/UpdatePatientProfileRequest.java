@@ -13,6 +13,9 @@ import java.time.LocalDate;
 @Setter
 public class UpdatePatientProfileRequest {
 
+    @Size(max = 120)
+    private String fullName;
+
     @NotBlank
     @Size(max = 20)
     private String phone;

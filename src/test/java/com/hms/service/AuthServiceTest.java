@@ -105,6 +105,7 @@ class AuthServiceTest {
 
         assertThat(response.isMustResetPassword()).isTrue();
         assertThat(response.getToken()).isEqualTo("jwt-patient");
+        verify(emailService).sendWelcomeEmail("anita.patient@example.com", "Anita Sharma");
     }
 
     @Test

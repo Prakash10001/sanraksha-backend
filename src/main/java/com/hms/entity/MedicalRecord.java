@@ -2,6 +2,7 @@ package com.hms.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -29,6 +30,24 @@ public class MedicalRecord {
 
     @Column(length = 255)
     private String diagnosis;
+
+    @Column(name = "blood_pressure_systolic")
+    private Integer bloodPressureSystolic;
+
+    @Column(name = "blood_pressure_diastolic")
+    private Integer bloodPressureDiastolic;
+
+    @Column(name = "heart_rate_bpm")
+    private Integer heartRateBpm;
+
+    @Column(name = "temperature_celsius", precision = 4, scale = 1)
+    private BigDecimal temperatureCelsius;
+
+    @Column(name = "weight_kg", precision = 6, scale = 2)
+    private BigDecimal weightKg;
+
+    @Column(name = "oxygen_saturation_percent")
+    private Integer oxygenSaturationPercent;
 
     @Column(columnDefinition = "TEXT")
     private String prescription;

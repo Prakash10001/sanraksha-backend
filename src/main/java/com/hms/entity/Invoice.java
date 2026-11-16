@@ -49,6 +49,9 @@ public class Invoice {
     @Column(name = "gateway_order_id", unique = true, length = 64)
     private String gatewayOrderId;
 
+    @Column(name = "gateway_key_id", length = 64)
+    private String gatewayKeyId;
+
     @Column(name = "gateway_payment_id", unique = true, length = 64)
     private String gatewayPaymentId;
 

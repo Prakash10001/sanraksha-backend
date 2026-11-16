@@ -1,5 +1,6 @@
 package com.hms.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalTime;
@@ -50,18 +51,22 @@ public class Doctor {
     private String rejectionReason;
 
     // NEW
+    @JsonIgnore
     @Column(name = "identity_document_reference", length = 500)
     private String identityDocumentReference;
 
     // NEW
+    @JsonIgnore
     @Column(name = "identity_document_original_name", length = 255)
     private String identityDocumentOriginalName;
 
-       // NEW
+    // NEW
+    @JsonIgnore
     @Column(name = "identity_document_content_type", length = 100)
     private String identityDocumentContentType;
 
     // NEW
+    @JsonIgnore
     @Column(name = "identity_document_size")
     private Long identityDocumentSize;
 
